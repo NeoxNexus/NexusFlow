@@ -21,11 +21,11 @@
 
 ## 核心文档
 
-- `architecture.md`：架构设计细稿
-- `roadmap.md`：阶段路线图
-- `implementation-plan.md`：当前实施计划
-- `decision-log.md`：关键决策记录
-- `session-handoff.md`：后续 session 接手说明
+- `docs/architecture.md`：架构设计细稿
+- `docs/roadmap.md`：阶段路线图
+- `docs/implementation-plan.md`：当前实施计划
+- `docs/decision-log.md`：关键决策记录
+- `docs/session-handoff.md`：后续 session 接手说明
 - `sql/schema.sql`：SQLite 最小 schema
 
 ## 目录说明

@@ -18,6 +18,9 @@
 | Week 2（W14） | 4 | ✅ W14 Review | 0 | 无新增使用 | 安静周/节前 |
 | Week 3（W15） | 0 | ✅ W15 Review | 0 | 无新增使用 | 假期归来中断周 |
 | Week 4（W16） | 0 | ✅ W16 Review | 0 | 无新增使用 | 无触发，auto-collection cron 23 次超时 |
+| Week 5（W17） | 0 | ✅ W17 Review | 0 | 无新增使用 | auto-collection 恢复后又退化 |
+| Week 6（W18） | — | ❌ 未做 | — | — | 无周总结记录 |
+| Week 7（W19） | 0 | ✅ W19 Review | 0 | 无新增使用 | auto-collection 连续4次timeout |
 
 ---
 
@@ -142,3 +145,29 @@ Phase-1 正式关闭需满足以下条件：
 ---
 
 *最后更新：2026-04-24 21:00（W17 Review 生成时，Phase-1 正式关闭）*
+
+---
+
+## W19 更新（2026-05-08）
+
+### Auto-collection Cron 状态
+- **Cron ID**：`06cb3cc5-2f80-4c1f-828a-f0357ced4fd6`
+- **状态**：❌ 退化，连续 4 次 timeout（5/5、5/6、5/7、5/8）
+- **最近成功**：2026-05-04
+- **分析**：多模型同时 timeout，模型端问题可能性大；空仓库导致推理消耗大但无实际数据返回
+
+### Phase-2 状态
+- **Phase-2 未实质启动**
+- W17 建议「Prompt 优化」，未执行
+- 核心原因：没有新外部触发，也没有主动使用场景
+
+### NexusWorkBench 状态
+- 仍只有 `1dfbe00 first commit`，无任何新功能代码
+- auto-collection 目标已无效
+
+### 下一步建议
+- 修复 auto-collection cron 超时问题（降低推理量或 timeout 阈值）
+- 重新评估 NexusWorkBench 用途（补充实质内容或暂时禁用 cron）
+- 主动使用一次 technical-strategy-review 或 project-bootstrap，打破「等待触发」循环
+
+*最后更新：2026-05-08 21:00（W19 Friday）*

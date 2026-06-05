@@ -170,4 +170,31 @@ Phase-1 正式关闭需满足以下条件：
 - 重新评估 NexusWorkBench 用途（补充实质内容或暂时禁用 cron）
 - 主动使用一次 technical-strategy-review 或 project-bootstrap，打破「等待触发」循环
 
-*最后更新：2026-05-08 21:00（W19 Friday）*
+---
+
+## W23 更新（2026-06-05）
+
+### Auto-collection Cron 状态
+- **Cron ID**：`06cb3cc5-2f80-4c1f-828a-f0357ced4fd6`
+- **状态**：❌ 连续 5 次 timeout（6/1–6/5）
+- **最近成功**：2026-05-27
+- **分析**：NexusWorkBench 仍只有 1dfbe00 "first commit"，无实质内容。连续超时的根本原因是仓库为空 + 模型推理消耗大但无实际数据。
+
+### Phase-2 状态
+- **Phase-2 未实质启动**
+- W17 建议「Prompt 优化」，未执行
+- W18–W23 连续 6 次 review 建议"确认数据来源策略"，未执行
+- 核心原因：数据来源问题悬而未决，Phase-2 无法找到切入点
+
+### 候选池与能力资产状态
+- technical-strategy-review 和 project-bootstrap 二次验证停滞 10+ 周
+- 连续 9 周无真实工作样本（W15–W23）
+- 端午假期（W24，6/7–6/9）临近，预计继续无工作样本
+
+### 下一步建议
+- **最高优先**：确认数据来源策略（NexusWorkBench 重建 or 换 OpenClaw session logs）
+- **高优先**：决定 auto-collection cron 去留（连续 5 次超时，维持无意义）
+- **中优先**：Prompt 优化（不依赖数据来源问题解决）
+- **利用假期**：如果 W24–W25 有工作触发，主动记录样本
+
+*最后更新：2026-06-05 21:00（W23 Friday）*

@@ -199,23 +199,38 @@ Phase-1 正式关闭需满足以下条件：
 
 ---
 
-## W24 更新（2026-06-12）
+## W25 更新（2026-06-19）
 
 ### Auto-collection Cron 状态
 - **Cron ID**：`06cb3cc5-2f80-4c1f-828a-f0357ced4fd6`
-- **状态**：❌ 连续 6 次 timeout（6/3、6/5、端午假期6/8–6/11）
-- **最近成功**：2026-05-27
-- **分析**：NexusWorkBench 仍只有 1dfbe00 "first commit"，连续 timeout 已成持续状态。W23–W24 每周期都在重复相同结论，决策已到期。
+- **状态**：❌ 连续 12 次 timeout（6/3–6/19，跨越 W24–W25 两次 review 周期）
+- **最近成功**：2026-05-27（约 3 周前）
+- **单次消耗**：约 120 秒 timeout，消耗 11k+ input tokens，无有效输出
+- **根本原因**：NexusWorkBench 仍只有 `1dfbe00 first commit`，模型在空数据上推理超时
 
 ### Phase-2 状态
 - **Phase-2 未实质启动**
-- 连续 7 周（W17–W24）未执行任何 Phase-2 动作
-- 数据来源问题悬而未决，Phase-2 切入点不明
+- 连续 8 周（W17–W25）未执行任何 Phase-2 动作
+- 数据来源问题持续悬而未决
+
+### 候选池状态（无变化）
+- technical-strategy-review：11 周未二次验证
+- project-bootstrap：11 周未二次验证
+- 连续 11 周无真实工作样本（W15–W25）
+
+### ⚠️ 核心问题：Cron 去留决策连续两个周期未执行
+
+W24 review 已明确标注"决策已到期"，W25 仍在重复相同结论。**这个问题需要 Neo 本周给出明确指令**：
+
+| 选项 | 做法 | 前提条件 |
+|---|---|---|
+| **A. 立即禁用** | 删除 cron `06cb3cc5-2f80-4c1f-828a-f0357ced4fd6` | 无 |
+| **B. 降频等待** | 改为每月一次，手动触发 | NexusWorkBench 有实质内容 |
+| **C. 切换数据源** | 改用 session logs 做 auto-collection | 确认 session logs 有内容可采 |
+| **D. 维持现状** | 接受每 24 小时 120 秒资源浪费 | 接受连续 timeout 状态 |
 
 ### 下一步建议
-- **最高优先**：auto-collection cron 去留决策（禁用/改频率/等NexusWorkBench有内容）
-- **高优先**：确认数据来源策略（session logs / NexusWorkBench重建 / 接受当前状态）
-- **中优先**：Prompt 优化（不依赖数据来源）
-- 连续 10 周无真实工作样本（W15–W24），建议评估"无外部触发时 NexusFlow 合理状态"
+- **本周必做**：Neo 确认 Cron 去留（A/B/C/D）
+- **无外部触发期间**：NexusFlow 合理定位是"被动等待 + 必要时主动使用"，不是"自动采集空数据"
 
-*最后更新：2026-06-12 21:00（W24 Friday）*
+*最后更新：2026-06-19 21:00（W25 Friday）*

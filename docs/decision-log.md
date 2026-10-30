@@ -36,3 +36,19 @@
 - 结论：team 最终由人工干预完成收口。
 - 原因：strategy-lead 未继续消费 inbox，leader 任务长期 pending。
 - 备注：不影响核心评审结论有效性，但说明后续如果继续用 ClawTeam，要关注 leader 收尾机制与 idle/finish 行为。
+
+## D-009 采集基线持久化到仓库内，不再使用 /tmp
+- 结论：把 auto-collection 的对比基线从 `/tmp/nexusflow_last_commits.txt` 迁到 `NexusFlow/logs/auto-collected/.state`（随 Git 版本化），并改写 cron 任务描述指向新路径。
+- 原因：/tmp 会被系统清理，2026-10-30 补跑时基线已丢失，导致增量对比链路不稳定。
+- 时间：2026-10-30（W44）
+
+## D-010 auto-collection cron 停用（而非删除）
+- 结论：把 cron `06cb3cc5` 置为 `enabled=false`，保留任务定义，不删除。
+- 原因：该决策自 W24 提出后连续 18 周未执行；采集目标 NexusWorkBench 自 2026-03-25 起无任何提交，事实消亡。禁用完全可逆，且比删除保留更多信息。
+- 重新激活条件：任意 `~/workspace` 仓库连续 2 周出现提交时恢复，并同步把数据源扩展到全仓库。
+- 时间：2026-10-30（W44）
+
+## D-011 能力资产验证从"周度 KPI"改为"事件驱动"
+- 结论：technical-strategy-review / project-bootstrap 不再作为周度硬指标，改为场景自然出现时立即调用。
+- 原因：连续 31 周无外部触发场景，根因是工作面本身停滞（10 个仓库 0 提交），强行触发只是形式主义。
+- 时间：2026-10-30（W44）

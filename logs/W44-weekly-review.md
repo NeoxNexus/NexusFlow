@@ -22,8 +22,19 @@
 | NexusFlow 周总结提醒 | `a4bc5513` | 10-30 21:00 | 本次触发 | ✅ |
 | NexusFlow 日志提醒 | `ec3da8e8` | 每日 20:00 | 自 2026-04 起禁用 | ⏸️ |
 
-**归因（本周新结论）**：10-29 白天 Gateway 存在**离线窗口**，导致周四/周五两个任务全部堆叠到 10-30 傍晚集中补跑。**不是任务配置错误。**
-证据：三个不同 schedule 的 job（15:00 Thu / 14:00 Fri / 09:00 daily）的补跑时间集中在 10-30 18:48~18:54 的 6 分钟内 —— 这正是宿主恢复后队列追赶的特征。
+**归因（本周已定位到根因，证据链完整）**：**Mac mini 在 10-29 05:05 重启后未登录图形界面，LaunchAgent（`ai.openclaw.gateway`）属于用户域，必须等用户登录才会启动，因此 Gateway 实际离线约 37 小时**（10-29 00:58 日志中断 → 10-30 18:47 恢复），期间周四/周五任务全部堆叠到 10-30 傍晚集中补跑。
+
+证据链：
+1. `last reboot` → Thu Oct 29 05:05（重启）
+2. `last` → `neo console Oct 30 18:45` 是重启后的**首次登录**
+3. `gateway.log` → 10-29 00:58 之后无任何输出，直到 10-30 18:48 恢复
+4. `launchctl list` → `ai.openclaw.gateway` 位于 **LaunchAgents（用户域）**，KeepAlive=true 但**用户域 agent 在无 GUI 登录时不启动**
+5. `/Library/LaunchDaemons` 下**没有** openclaw 的系统级守护进程
+6. 补跑时间集中在 18:48~18:54 的 6 分钟内 → 登录后队列追赶的典型特征
+
+**结论**：不是任务配置错误，是**守护进程部署层级问题**。修复方案已备好：`docs/gateway-launchdaemon.plist`（LaunchDaemon 版本，无需登录即自启），安装命令见文件头注释（需 sudo，由 Neo 执行）。
+
+**同时修正一条历史归因**：过去统计的"连续 timeout"，至少有一部分来自宿主不在线，而非任务本身失效。**但"采集目标已消亡"的结论不受影响** —— 那由数据事实推出（NexusWorkBench 自 2026-03-25 起无提交）。
 
 **推论（对历史结论的修正）**：过去 17 周统计的"连续 timeout"，至少有一部分来自**宿主不在线**，而不是任务本身有问题。把 timeout 一律归因为"任务失效"是不准确的；但"采集目标已消亡"这个结论不受影响 —— 那是由**数据事实**（NexusWorkBench 7 个月无提交）推出的，与 timeout 原因无关。
 
@@ -77,12 +88,17 @@
 
 ## 五、W45 建议动作
 
-1. **Gateway 常驻 / 自启检查**（本周唯一新的技术债）
-   10-29 离线窗口导致两个周报提醒延迟 27 小时才补跑，直接影响周报时效。建议确认：Mac mini 是否为休眠状态、Gateway 是否配置 launchd 自启、有无电力/网络事件导致休眠。
+1. **把 Gateway 从用户域 LaunchAgent 升级为系统级 LaunchDaemon**（本周唯一新增技术债，且已定位根因）
+   `docs/gateway-launchdaemon.plist` 已备好，安装命令写在文件头注释里（需 sudo）：
    ```bash
-   openclaw gateway status
-   # 检查是否配置了 launchd 守护进程
+   sudo cp docs/gateway-launchdaemon.plist /Library/LaunchDaemons/ai.openclaw.gateway.plist
+   sudo chown root:wheel /Library/LaunchDaemons/ai.openclaw.gateway.plist
+   sudo chmod 644 /Library/LaunchDaemons/ai.openclaw.gateway.plist
+   sudo launchctl bootstrap system /Library/LaunchDaemons/ai.openclaw.gateway.plist
+   launchctl bootout gui/$(id -u)/ai.openclaw.gateway   # 停掉用户域实例，避免端口冲突
    ```
+   验证：重启后不登录，`openclaw gateway status` 应显示 running。
+   替代方案（更轻，但安全权衡需你判断）：开启系统自动登录。
 2. **auto-collection 保持禁用**
    触发重新激活的条件（写死，避免再讨论）：**任意 `~/workspace` 仓库出现连续 2 周提交** → 恢复该 job；若期间源仓库恢复活跃，则恢复时同步把数据源扩到全仓库。
 3. **候选池收敛**

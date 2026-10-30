@@ -411,3 +411,9 @@ W24 review 已明确标注"决策已到期"，W25 仍在重复相同结论。**�
 3. 候选池进一步收敛，P1 正式降级为事件驱动
 
 *最后更新：2026-10-30 21:00（ISO W44 Friday）*
+
+### W44 追加：Gateway 离线根因（已定位）
+- 现象：2026-10-29 05:05 机器重启后，Gateway 直到 10-30 18:47 才恢复（约 37 小时离线），周四/周五 cron 全部堆叠补跑
+- 根因：Gateway 以 **LaunchAgent（用户域）** 部署，重启后未登录图形界面就不会启动；系统级 LaunchDaemon 缺失
+- 修复方案：`docs/gateway-launchdaemon.plist` 已备好，待 Neo 执行 sudo 安装
+- 影响面：所有依赖 Gateway 的 cron（周报提醒、周总结、采集）

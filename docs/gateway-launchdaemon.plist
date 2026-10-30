@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  OpenClaw Gateway 以 LaunchDaemon 方式常驻（root 域），解决：
+  2026-10-29 Mac mini 重启后未登录图形界面，LaunchAgent（ai.openclaw.gateway）
+  无法启动，导致所有 cron 任务堆叠到下次登录后补跑（周四/周五周报提醒延迟 27h51m）。
+
+  安装（需要 sudo）：
+    sudo cp docs/gateway-launchdaemon.plist /Library/LaunchDaemons/ai.openclaw.gateway.plist
+    sudo chown root:wheel /Library/LaunchDaemons/ai.openclaw.gateway.plist
+    sudo chmod 644 /Library/LaunchDaemons/ai.openclaw.gateway.plist
+    sudo launchctl bootstrap system /Library/LaunchDaemons/ai.openclaw.gateway.plist
+    sudo launchctl enable system/ai.openclaw.gateway
+
+  注意：安装后需停掉原来的 LaunchAgent，避免两个实例抢同一个端口：
+    launchctl bootout gui/$(id -u)/ai.openclaw.gateway
+
+  验证：
+    sudo launchctl list | grep openclaw
+    reboot 后无需登录，`openclaw gateway status` 应显示 running
+-->
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>ai.openclaw.gateway</string>
+
+    <key>Comment</key>
+    <string>OpenClaw Gateway (system daemon, runs without GUI login)</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>ThrottleInterval</key>
+    <integer>1</integer>
+    <key>ProcessType</key>
+    <string>Interactive</string>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>/opt/homebrew/opt/node/bin/node</string>
+      <string>/Users/neo/.npm-global/lib/node_modules/openclaw/dist/index.js</string>
+      <string>gateway</string>
+      <string>--port</string>
+      <string>18789</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/neo</string>
+
+    <key>StandardOutPath</key>
+    <string>/Users/neo/.openclaw/logs/gateway.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/neo/.openclaw/logs/gateway.err.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>HOME</key>
+      <string>/Users/neo</string>
+      <key>TMPDIR</key>
+      <string>/var/folders/vr/0c42p12d56xb9g48vl_yg47m0000gn/T/</string>
+      <key>NODE_EXTRA_CA_CERTS</key>
+      <string>/etc/ssl/cert.pem</string>
+      <key>NODE_USE_SYSTEM_CA</key>
+      <string>1</string>
+      <key>PATH</key>
+      <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/neo/.local/bin:/Users/neo/.npm-global/bin</string>
+      <key>OPENCLAW_GATEWAY_PORT</key>
+      <string>18789</string>
+      <key>OPENCLAW_LAUNCHD_LABEL</key>
+      <string>ai.openclaw.gateway</string>
+      <key>OPENCLAW_SERVICE_KIND</key>
+      <string>gateway</string>
+    </dict>
+  </dict>
+</plist>

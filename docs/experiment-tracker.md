@@ -417,3 +417,15 @@ W24 review 已明确标注"决策已到期"，W25 仍在重复相同结论。**�
 - 根因：Gateway 以 **LaunchAgent（用户域）** 部署，重启后未登录图形界面就不会启动；系统级 LaunchDaemon 缺失
 - 修复方案：`docs/gateway-launchdaemon.plist` 已备好，待 Neo 执行 sudo 安装
 - 影响面：所有依赖 Gateway 的 cron（周报提醒、周总结、采集）
+
+### W45（2026-11-02 ~ 11-06）
+- **代码活动**：`~/workspace` 10 个仓库 0 提交；NexusFlow 仓库 0 提交（最后仍是 10-30 的 W44 结清提交）
+- **调度**：3 个在用 cron **全程准点**（周四 15:00:00.013、周五 14:00:00.301、周五 21:00），无补跑堆积；采集 cron 禁用后本周 **0 次运行、0 超时**
+- **未完成项**：Gateway 仍是用户域 LaunchAgent（PID 2066），`/Library/LaunchDaemons` 下仍无 openclaw plist → **连续第 2 周**未执行 W44 备好的升级方案。新增阻塞认知：May 处于非交互 exec 环境，`sudo -n` 无法过，**该动作只能由 Neo 手动执行或授权免密 sudo**
+- **新候选**：`工具不可用时的降级采集路径`（P3，待验证，样本 2 次）——`memory_search` 连续两周 embedding 报错不可用，本周事实改由 git / cron runs / 系统状态直采，交付未中断
+- **候选池收敛**：`cron-health-triage`（P2）升级窗口收紧至 **W47**，届时若仍无同类排查即降级为事件驱动，不再作为周度议题
+- **能力资产**：technical-strategy-review / project-bootstrap 仍 0 新验证（事件驱动模式运转正常，无额外成本）；周报归档链路本周新增并验证成功 ✅
+- **归档**：W45 周报已落 Obsidian（11-06 14:02）；W23~W43 共 19 周仍缺档
+- **下一步**：① Gateway 升级或改选"开自动登录"（需 Neo 动手）② 采集 cron 保持禁用 ③ 排查 memory_search embedding 配置 ④ 归档断档 19 周如需补齐则单开批量任务，不挂周总结
+
+*最后更新：2026-11-06 21:0x（ISO W45 Friday）*
